@@ -14,7 +14,8 @@ FROM nginx:alpine
 # para o diretório raiz do Nginx.
 COPY --from=build /app/dist/ /usr/share/nginx/html/
 
-# As outras linhas 'COPY' foram removidas porque o 'npm run build'
-# já colocou o manifest, o service-worker e os ícones dentro da pasta 'dist'.
+# As outras linhas 'COPY' (manifest, service-worker, icons) foram removidas
+# porque o 'npm run build' (Vite) já inclui todos os arquivos da pasta 'public/'
+# dentro da pasta 'dist/' automaticamente.
 
 EXPOSE 80
