@@ -1,0 +1,30 @@
+{
+  "name": "Productivity Hub",
+  "short_name": "ProdHub",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#336699",
+  "icons": [
+    { 
+      "src": "/icons/icon-16.png", 
+      "sizes": "16x16", 
+      "type": "image/png" 
+    },
+    { 
+      "src": "/icons/icon-128.png", 
+      "sizes": "128x128", 
+      "type": "image/png" 
+    },
+    { 
+      "src": "/icons/icon192-copy.png", 
+      "sizes": "192x192", 
+      "type": "image/png" 
+    },
+    { 
+      "src": "/icons/icon512-copy-2.png", 
+      "sizes": "512x512", 
+      "type": "image/png" 
+    }
+  ]
+}

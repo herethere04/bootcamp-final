@@ -1,0 +1,22 @@
+services:
+  # Serviço 1: Nosso Backend (API)
+  api:
+    build: ./apps/api
+    container_name: productivity-api
+    ports:
+      - "3000:3000" # Expõe a porta 3000 da API no seu PC
+
+  # Serviço 2: Nosso Frontend (PWA)
+  web:
+    build: ./apps/web
+    container_name: productivity-web
+    ports:
+      # Expõe o PWA na porta 8080 do seu PC
+      - "8080:80" 
+    environment:
+      # Esta variável de ambiente é lida pelo Vite/Docker
+      # para saber onde a API está
+      - VITE_API_URL=http://api:3000
+    # Garante que a API inicie antes do PWA
+    depends_on:
+      - api
