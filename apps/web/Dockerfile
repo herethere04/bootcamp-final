@@ -1,4 +1,4 @@
-# Estágio 1: Build (Isto constrói o seu PWA)
+# Estágio 1: Build (Isto está correto)
 FROM node:20-alpine AS build
 WORKDIR /app
 COPY package*.json ./
@@ -6,13 +6,15 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-# Estágio 2: Servir (Isto serve o PWA com Nginx)
+# Estágio 2: Servir (Com a correção)
 FROM nginx:alpine
 
-# A CORREÇÃO ESTÁ AQUI:
-# Copia o *CONTEÚDO* da pasta 'dist' (note a barra / no final)
-# para a pasta raiz do Nginx. O Vite já coloca tudo
-# (index.html, manifest, service-worker, icons) dentro de 'dist'.
+# Copia o CONTEÚDO da pasta 'dist' para a raiz do Nginx
+# Esta é a correção nº 1
 COPY --from=build /app/dist/ /usr/share/nginx/html/
+
+# Copia o nosso ficheiro de configuração personalizado do Nginx
+# Esta é a correção nº 2, que força o 'index.html'
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
