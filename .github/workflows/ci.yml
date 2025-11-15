@@ -1,0 +1,46 @@
+name: CI/CD PWA e API
+
+on: [push, pull_request]
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js (para o Playwright/wait-on)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar Dependências de Teste (Playwright e Wait-on)
+        # Instala as ferramentas que o nosso "runner" do GitHub precisa
+        run: cd apps/web && npm ci
+
+      - name: Instalar Navegadores Playwright
+        run: cd apps/web && npx playwright install --with-deps
+
+      # O Docker Compose faz o build da 'api' e 'web' por nós
+      - name: Iniciar Serviços (API e Web) em Background
+        run: docker compose up --build -d
+
+      # ESTE É O PASSO-CHAVE PARA EVITAR O 'CONNECTION REFUSED'
+      - name: Aguardar o PWA ficar online
+        # Usa a ferramenta 'wait-on' que instalámos
+        run: cd apps/web && npx wait-on http://localhost:8080 --timeout 120000
+
+      - name: Rodar Testes E2E (Agora contra serviços prontos)
+        run: cd apps/web && npx playwright test
+
+      - name: Upload Relatório Playwright
+        if: always() # Sempre executa, mesmo se o teste falhar
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: apps/web/playwright-report/
+
+      - name: Parar Serviços Docker
+        if: always() # Sempre executa, para limpar
+        run: docker compose down
